@@ -11,8 +11,9 @@ resource "random_string" "vm-name" {
   special = false
 }
 
-# Generate a random password.
+# Generate a random password. Not used when a password is specified as input.
 resource "random_password" "vm-password" {
+  count            = var.admin_password == null ? 1 : 0
   length           = 16
   min_upper        = 2
   min_lower        = 2
@@ -45,7 +46,7 @@ resource "azurerm_key_vault_secret" "vm-password" {
     azurerm_windows_virtual_machine.windows-vm
   ]
   name         = var.platform == "windows" ? local.windows_machine_name : local.linux_machine_name
-  value        = random_password.vm-password.result
+  value        = var.admin_password != null ? var.admin_password : random_password.vm-password[0].result
   key_vault_id = var.key_vault_id
 }
 

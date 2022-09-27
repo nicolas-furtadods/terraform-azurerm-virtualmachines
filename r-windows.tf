@@ -8,7 +8,7 @@ resource "azurerm_windows_virtual_machine" "windows-vm" {
   resource_group_name = var.resource_group_name
   size                = var.vm_size
   admin_username      = var.admin_username
-  admin_password      = random_password.vm-password.result
+  admin_password      = var.admin_password != null ? var.admin_password : random_password.vm-password[0].result
   tags                = var.tags
 
   network_interface_ids = [azurerm_network_interface.vm-nic.id]
@@ -33,7 +33,7 @@ resource "azurerm_windows_virtual_machine" "windows-vm" {
 }
 
 resource "azurerm_virtual_machine_extension" "custom_data" {
-  depends_on          = [azurerm_windows_virtual_machine.windows-vm]
+  depends_on           = [azurerm_windows_virtual_machine.windows-vm]
   count                = var.platform == "windows" ? 1 : 0
   name                 = "Post_Configuration"
   virtual_machine_id   = azurerm_windows_virtual_machine.windows-vm[0].id
@@ -43,7 +43,7 @@ resource "azurerm_virtual_machine_extension" "custom_data" {
   tags                 = var.tags
   settings             = <<SETTINGS
   {
-    "commandToExecute": "powershell Add-WindowsFeature Web-Server"
+    "commandToExecute": "powershell try { Add-WindowsFeature Web-Server } Catch { Write-Host 'This is a workstation' }"
   }
   SETTINGS
 }

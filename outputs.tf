@@ -3,6 +3,12 @@ output "id" {
   value       = var.platform == "windows" ? azurerm_windows_virtual_machine.windows-vm[0].id : azurerm_linux_virtual_machine.linux-vm[0].id
 }
 
+output "name" {
+  description = "The Id of the Linux Virtual Machine."
+  value       = var.platform == "windows" ? azurerm_windows_virtual_machine.windows-vm[0].name : azurerm_linux_virtual_machine.linux-vm[0].name
+}
+
+
 output "identity" {
   description = "An identity block."
   value       = var.platform == "windows" ? azurerm_windows_virtual_machine.windows-vm[0].identity : azurerm_linux_virtual_machine.linux-vm[0].identity

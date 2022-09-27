@@ -75,6 +75,12 @@ variable "admin_username" {
   default     = ""
 }
 
+variable "admin_password" {
+  description = "Password for Virtual Machine administrator account. A random password will be generated if not used."
+  type        = string
+  default     = null
+}
+
 variable "vm_image" {
   type        = map(string)
   description = "Virtual machine source image information"
